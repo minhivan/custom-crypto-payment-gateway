@@ -75,11 +75,14 @@ function update_acf_meta($data)
 
 function init_pay_for_order_form($order_id)
 {
+    $order  = new \WC_Order($order_id);
     $method = $_REQUEST['method'];
+    $total  = floatval($order->get_total());
+
     if ($method == 'manual') {
-        include_once CRYPTOPAY_PATH . 'templates/txnid-form.php';
+        include_once CRYPTOPAY_PATH . 'templates/cryptopay-form-txn.php';
     } else {
-        include_once CRYPTOPAY_PATH . 'templates/metamask-form.php';
+        include_once CRYPTOPAY_PATH . 'templates/cryptopay-form-metamask.php';
     }
 }
 

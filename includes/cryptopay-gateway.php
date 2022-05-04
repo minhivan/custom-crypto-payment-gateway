@@ -119,7 +119,7 @@ if (!class_exists('CryptoPayGateway')) {
          */
         public function payment_fields()
         {
-            require_once CRYPTOPAY_PATH . 'templates/payment-fields.php';
+            require_once CRYPTOPAY_PATH . 'templates/cryptopay-payment-fields.php';
         }
 
         /*
@@ -135,7 +135,6 @@ if (!class_exists('CryptoPayGateway')) {
          */
         public function thankyou_page()
         {
-            // require_once CRYPTOPAY_PATH . 'templates/tnxid-form.php';
         }
 
         /*

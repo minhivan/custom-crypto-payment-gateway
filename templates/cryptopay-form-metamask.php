@@ -30,7 +30,7 @@
                 </p>
                 <p class="form-row form-row-first form-group validate-required has-value" id="total_field" data-priority="10">
                     <label for="total" class=""><?php esc_html_e('Total', 'woocommerce'); ?></label>
-                    <input type="text" class="input-text form-control" name="total" id="total" value="- USDT" placeholder="<?php esc_html_e('Total', 'woocommerce'); ?>" disabled>
+                    <input type="text" class="input-text form-control" name="total" id="total" value="<?= number_format_i18n($total , 2); ?> USDT" placeholder="<?php esc_html_e('Total', 'woocommerce'); ?>" disabled>
                     <i class="ic">
                         <img alt="" src="/modules/invests/assets/img/logo-usdt.png" class="ct-image" loading="lazy"></a>
                     </i>
