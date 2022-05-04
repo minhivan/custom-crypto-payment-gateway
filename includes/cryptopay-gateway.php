@@ -41,13 +41,8 @@ if (!class_exists('CryptoPayGateway')) {
             $this->enabled      = $this->get_option( 'enabled' );
             $this->manual       = 'yes' === $this->get_option( 'manual' );
             $this->auto         = 'yes' === $this->get_option( 'auto' );
-            $this->api_key      = $this->get_option( 'api_key' );
-            $this->main_wallet  = $this->get_option( 'main_wallet' );
-
-
-            // $this->private_key = $this->testmode ? $this->get_option( 'test_private_key' ) : $this->get_option( 'private_key' );
-            // $this->publishable_key = $this->testmode ? $this->get_option( 'test_publishable_key' ) : $this->get_option( 'publishable_key' );
-
+            $this->crypto_main_wallet   = $this->get_option( 'crypto_main_wallet' );
+            $this->crypto_api_key       = $this->get_option( 'crypto_api_key' );
 
             // This action hook saves the settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
@@ -58,13 +53,11 @@ if (!class_exists('CryptoPayGateway')) {
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
             add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
-
-
-            add_action('crypto_pay', array($this, 'show_form_pay'), 1);
+            add_action('init', array($this, 'migrate_settings'));
+            add_action('crypto_pay', 'init_pay_for_order_form', 1);
 
             // You can also register a webhook here
             // add_action( 'woocommerce_api_{webhook name}', array( $this, 'webhook' ) );
-
         }
 
         /**
@@ -93,7 +86,7 @@ if (!class_exists('CryptoPayGateway')) {
                     'description' => 'This controls the description which the user sees during checkout.',
                     'default'     => 'Woocommerce payment gateway with crypto method',
                 ),
-                'main_wallet' => array(
+                'crypto_main_wallet' => array(
                     'title'       => __('Main wallet', $this->domain),
                     'type'        => 'text',
                     'description' => __('Your main crypto wallet', $this->domain),
@@ -114,9 +107,9 @@ if (!class_exists('CryptoPayGateway')) {
                     'description' => 'Payment with metamask',
                     'default'     => 'yes',
                 ),
-                'api_key' => array(
+                'crypto_api_key' => array(
                     'title'       => 'API Key',
-                    'type'        => 'text'
+                    'type'        => 'password'
                 )
             );
         }
@@ -134,16 +127,7 @@ if (!class_exists('CryptoPayGateway')) {
 		 */
         public function payment_scripts()
         {
-            // we need JavaScript to process a token only on cart/checkout pages, right?
-            if (!is_cart() && !is_checkout()) {
-                return;
-            }
-
-            // if our payment gateway is disabled, we do not have to enqueue JS to  o
-            if ('no' === $this->enabled) {
-                return;
-            }
-            wp_enqueue_script('cryptopay-main', CRYPTOPAY_URL . 'assets/js/validate.js', array('jquery'), '1.0.0', true);
+            require_once CRYPTOPAY_PATH . 'includes/validate-fields.php';
         }
 
         /**
@@ -189,7 +173,7 @@ if (!class_exists('CryptoPayGateway')) {
 
 
             // add metadata
-            updateAcfPost([
+            update_acf_meta([
                 'id' => $order_id,
                 'acf' => array(
                     '_order_type' => 'topup',
@@ -224,14 +208,14 @@ if (!class_exists('CryptoPayGateway')) {
         }
 
 
-        public function show_form_pay($order_id)
+        public function migrate_settings() 
         {
-            (new CryptoPayment())->init_pay_for_order_form($order_id);
+            $settings = array(
+                "crypto_api_key" => $this->crypto_api_key,
+                "crypto_main_wallet" =>$this->crypto_main_wallet,
+            );
+            update_option('crypto_pay_settings', $settings);
         }
 
-        public function crypto_pay_hook_order_processing()
-        {
-            
-        }
     }
 }

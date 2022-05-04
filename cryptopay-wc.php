@@ -38,9 +38,9 @@ if (!class_exists('TeknixCryptoPay')) {
         {
             add_action('plugins_loaded', array($this, 'crypto_pay_load_files'));
             add_filter('woocommerce_payment_gateways', array($this, 'teknix_cryptopay_add_gateway'));
-            add_action('wp_ajax_crypto_pay_payment_verify', array($this, 'init_confirm_pay'));
-            add_action('wp_ajax_nopriv_crypto_pay_payment_verify', array($this, 'init_confirm_pay'));
-            add_action('woocommerce_order_status_processing', array($this, 'crypto_pay_hook_order_processing'));
+            add_action('wp_ajax_crypto_pay_payment_verify', 'crypto_pay_payment_verify');
+            add_action('wp_ajax_nopriv_crypto_pay_payment_verify', 'crypto_pay_payment_verify');
+            // add_action('woocommerce_order_status_on-hold', 'crypto_pay_order_process');
         }
 
 
@@ -52,12 +52,10 @@ if (!class_exists('TeknixCryptoPay')) {
                 return;
             }
             /*** Include payment gateway */
-            require_once CRYPTOPAY_PATH . 'includes/Constants.php';
             require_once CRYPTOPAY_PATH . 'includes/setup.php';
             require_once CRYPTOPAY_PATH . 'includes/functions.php';
+            require_once CRYPTOPAY_PATH . 'includes/Constants.php';
             require_once CRYPTOPAY_PATH . 'includes/CryptoPayGateway.php';
-            require_once CRYPTOPAY_PATH . 'includes/CryptoPayment.php';
-
         }
 
         /**
@@ -76,24 +74,9 @@ if (!class_exists('TeknixCryptoPay')) {
                 echo '<div class="error"><p>' . __('Cryptocurrency Payments Using MetaMask For WooCommerce requires WooCommerce to be active', 'cpmw') . '</div>';
             }
         }
-
-        public function init_confirm_pay()
-        {
-            $config = array(
-                "api_key" => $this->api_key
-            );
-            (new CryptoPayment($config))->crypto_pay_payment_verify();
-        }
-
-        public function crypto_pay_hook_order_processing($order_id)
-        {
-            // $config = array(
-            //     "api_key" => $this->api_key
-            // );
-            // (new CryptoPayment($config))->crypto_pay_order_process($order_id);
-        }
     }
-
 }
+
+
 $crypto_pay = new TeknixCryptoPay();
 $crypto_pay->registers();
