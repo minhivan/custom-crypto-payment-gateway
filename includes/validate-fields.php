@@ -10,4 +10,6 @@ if (!is_cart() && !is_checkout()) {
 if ('no' === $this->enabled) {
     return;
 }
+
+
 wp_enqueue_script('cryptopay-main', CRYPTOPAY_URL . 'assets/js/validate.js', array('jquery'), '1.0.0', true);

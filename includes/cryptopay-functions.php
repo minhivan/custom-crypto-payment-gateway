@@ -136,24 +136,17 @@ function crypto_pay_payment_verify()
     //    wp_die();
     // }
 
-    // update_post_meta($order_id, '_transaction_hash', $_POST['hash']);
-    // $order->update_status('wc-on-hold');
+    update_post_meta($order_id, '_transaction_hash', $_POST['hash']);
+    $order->update_status('wc-on-hold');
     
 
-    $body = [
-        'order_id'  => strval($order_id),
-        'env' => 'dev',
-        'type' => 'topup'
-    ];
-    makeApiRequest('/order-check', $body);
-
-    // wp_send_json_success([
-    //     'type' => true,
-    //     'id' => $order_id,
-    //     "title" => __('Payment Confirmation', 'custom'),
-    //     "messageTitle" => __("Thank you", 'custom'),
-    //     "message" => __("We have received your TXN ID. Payment checking will take around 30 minutes. Please wait patienly.", "custom"),
-    // ], 200);
+    wp_send_json_success([
+        'type' => true,
+        'id' => $order_id,
+        "title" => __('Payment Confirmation', 'custom'),
+        "messageTitle" => __("Thank you", 'custom'),
+        "message" => __("We have received your TXN ID. Payment checking will take around 30 minutes. Please wait patienly.", "custom"),
+    ], 200);
 
     wp_die();
 }
