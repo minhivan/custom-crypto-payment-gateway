@@ -125,10 +125,10 @@ if (!class_exists('CryptoPayGateway')) {
         /*
 		 * Custom CSS and JS, in most cases required only when you decided to go with a custom credit card form
 		 */
-        // public function payment_scripts()
-        // {
-        //     require_once CRYPTOPAY_PATH . 'includes/validate-fields.php';
-        // }
+        public function payment_scripts()
+        {
+            require_once CRYPTOPAY_PATH . 'includes/setup.php';   
+        }
 
         /**
          * Output for the order received page.
