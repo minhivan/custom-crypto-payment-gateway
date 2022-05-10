@@ -76,7 +76,7 @@ function update_acf_meta($data)
 function init_pay_for_order_form($order_id)
 {
     $order  = new \WC_Order($order_id);
-    $method = $_REQUEST['method'];
+    $method = $_REQUEST['cryptopay_method'];
     $total  = floatval($order->get_total());
 
     if ($method == 'manual') {
