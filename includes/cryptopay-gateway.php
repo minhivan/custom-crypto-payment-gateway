@@ -192,7 +192,7 @@ if (!class_exists('CryptoPayGateway')) {
             // Remove cart
             $woocommerce->cart->empty_cart();
 
-            $url = add_query_arg('method', $crypto_method, $order->get_checkout_payment_url());
+            $url = add_query_arg('cryptopay_method', $crypto_method, $order->get_checkout_payment_url());
 
             // Return thankyou redirect
             return array(
