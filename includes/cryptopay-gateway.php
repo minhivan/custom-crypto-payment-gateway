@@ -146,11 +146,12 @@ if (!class_exists('CryptoPayGateway')) {
                 wc_add_notice('First name is required!', 'error');
                 return false;
             }
+            $user_id = get_current_user_id();
 
-            // if (empty($_POST['billing_wallet'])) {
-            //     wc_add_notice('Billing wallet is required!', 'error');
-            //     return false;
-            // }
+            if (get_field('_default_wallet', 'user_'.$user_id) === null) {
+                wc_add_notice('Missing default crypto wallet', 'error');
+                return false;
+            }
             return true;
         }
 
@@ -162,9 +163,10 @@ if (!class_exists('CryptoPayGateway')) {
             global $woocommerce;
             $order              = new WC_Order($order_id);
             $crypto_method      = !empty($_POST['cryotopay_type']) ? sanitize_text_field($_POST['cryotopay_type']) : '';
-            $owner_address      = !empty($_POST['billing_wallet']) ? $_POST['billing_wallet'] : 'abc';
-
+            $default_wallet     = get_field('_default_wallet', 'user_'.$order->get_customer_id());
+            $owner_address      = !empty($_POST['billing_wallet']) ? $_POST['billing_wallet'] : $default_wallet;
             $support_type = $this->options;
+            
             if (!isset($support_type[$crypto_method])) {
                 wc_add_notice(__('Wrong payment type:', 'woocommerce') . __('CryptoPay type does not support, please try again', 'mycred_pay'), 'error');
                 return null;
