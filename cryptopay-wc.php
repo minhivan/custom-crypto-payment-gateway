@@ -53,8 +53,8 @@ if (!class_exists('TeknixCryptoPay')) {
             }
             /*** Include payment gateway */
             require_once CRYPTOPAY_PATH . 'includes/setup.php';
-            require_once CRYPTOPAY_PATH . 'includes/cryptopay-functions.php';
-            require_once CRYPTOPAY_PATH . 'includes/cryptopay-constants.php';
+            require_once CRYPTOPAY_PATH . 'includes/functions.php';
+            require_once CRYPTOPAY_PATH . 'includes/constants.php';
             require_once CRYPTOPAY_PATH . 'includes/cryptopay-gateway.php';
         }
 

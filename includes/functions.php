@@ -80,9 +80,9 @@ function init_pay_for_order_form($order_id)
     $total  = floatval($order->get_total());
 
     if ($method == 'manual') {
-        include_once CRYPTOPAY_PATH . 'templates/cryptopay-form-txn.php';
+        include_once CRYPTOPAY_PATH . 'templates/html/form-txn.php';
     } else {
-        include_once CRYPTOPAY_PATH . 'templates/cryptopay-form-metamask.php';
+        include_once CRYPTOPAY_PATH . 'templates/html/form-metamask.php';
     }
 }
 

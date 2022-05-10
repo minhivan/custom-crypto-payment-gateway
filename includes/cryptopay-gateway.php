@@ -36,13 +36,13 @@ if (!class_exists('CryptoPayGateway')) {
 
             // Load the settings.
             $this->init_settings();
-            $this->title        = $this->get_option( 'title' );
-            $this->description  = $this->get_option( 'description' );
-            $this->enabled      = $this->get_option( 'enabled' );
-            $this->manual       = 'yes' === $this->get_option( 'manual' );
-            $this->auto         = 'yes' === $this->get_option( 'auto' );
-            $this->crypto_main_wallet   = $this->get_option( 'crypto_main_wallet' );
-            $this->crypto_api_key       = $this->get_option( 'crypto_api_key' );
+            $this->title        = $this->get_option('title');
+            $this->description  = $this->get_option('description');
+            $this->enabled      = $this->get_option('enabled');
+            $this->manual       = 'yes' === $this->get_option('manual');
+            $this->auto         = 'yes' === $this->get_option('auto');
+            $this->crypto_main_wallet   = $this->get_option('crypto_main_wallet');
+            $this->crypto_api_key       = $this->get_option('crypto_api_key');
 
             // This action hook saves the settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
@@ -125,10 +125,10 @@ if (!class_exists('CryptoPayGateway')) {
         /*
 		 * Custom CSS and JS, in most cases required only when you decided to go with a custom credit card form
 		 */
-        public function payment_scripts()
-        {
-            require_once CRYPTOPAY_PATH . 'includes/validate-fields.php';
-        }
+        // public function payment_scripts()
+        // {
+        //     require_once CRYPTOPAY_PATH . 'includes/validate-fields.php';
+        // }
 
         /**
          * Output for the order received page.
@@ -142,17 +142,7 @@ if (!class_exists('CryptoPayGateway')) {
 		 */
         public function validate_fields()
         {
-            if (empty($_POST['billing_first_name'])) {
-                wc_add_notice('First name is required!', 'error');
-                return false;
-            }
-            $user_id = get_current_user_id();
-
-            if (get_field('_default_wallet', 'user_'.$user_id) === null) {
-                wc_add_notice('Missing default crypto wallet', 'error');
-                return false;
-            }
-            return true;
+            require_once CRYPTOPAY_PATH . 'templates/cryptopay-validate-fields.php';
         }
 
         /*
@@ -163,15 +153,14 @@ if (!class_exists('CryptoPayGateway')) {
             global $woocommerce;
             $order              = new WC_Order($order_id);
             $crypto_method      = !empty($_POST['cryotopay_type']) ? sanitize_text_field($_POST['cryotopay_type']) : '';
-            $default_wallet     = get_field('_default_wallet', 'user_'.$order->get_customer_id());
+            $default_wallet     = get_field('_default_wallet', 'user_' . $order->get_customer_id());
             $owner_address      = !empty($_POST['billing_wallet']) ? $_POST['billing_wallet'] : $default_wallet;
             $support_type = $this->options;
-            
+
             if (!isset($support_type[$crypto_method])) {
                 wc_add_notice(__('Wrong payment type:', 'woocommerce') . __('CryptoPay type does not support, please try again', 'mycred_pay'), 'error');
                 return null;
             }
-
 
             // add metadata
             update_acf_meta([
@@ -209,14 +198,13 @@ if (!class_exists('CryptoPayGateway')) {
         }
 
 
-        public function migrate_settings() 
+        public function migrate_settings()
         {
             $settings = array(
                 "crypto_api_key" => $this->crypto_api_key,
-                "crypto_main_wallet" =>$this->crypto_main_wallet,
+                "crypto_main_wallet" => $this->crypto_main_wallet,
             );
             update_option('crypto_pay_settings', $settings);
         }
-
     }
 }

@@ -76,14 +76,13 @@
         <div class="form-animation">
 
             <div class="form-row validate-required valid" id="txn_id_field" data-priority="">
-                <input type="number" name="txn_id" id="txn_id" placeholder="<?php esc_html_e('TXN ID', 'woocommerce'); ?>" require />
+                <input type="text" name="txn_id" id="txn_id" placeholder="<?php esc_html_e('TXN ID', 'woocommerce'); ?>" require />
                 <label for="txn_id"><?php esc_html_e('TXN ID', 'woocommerce'); ?></label>
                 <div class="line"></div>
                 <i class="ic">
                     <lord-icon target="p" src="<?php echo INVEST_URL ?>assets/lordicon/245-edit-document-outline-edited.json" trigger="click" style="width:20px;height:20px"></lord-icon>
                 </i>
                 <span class="valid error-mess"><?php esc_html_e('Your number invalid', 'woocommerce'); ?></span>
-                <input id="wallet_address" type="hidden" value="<?php echo  isset($_GET['wallet']) ? $_GET['wallet']  : ""; ?>" require />
             </div>
 
         </div>

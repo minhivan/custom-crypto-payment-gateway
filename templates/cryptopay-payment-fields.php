@@ -33,11 +33,3 @@ echo '<fieldset id="wc-' . esc_attr($this->id) . '-cc-form" class="wc-credit-car
 </div>
 <?php
 echo '<div class="clear"></div></fieldset>';
-// $option_keys = array_keys($this->options);
-
-// woocommerce_form_field( 'cryotopay_type', array(
-//     'type'          => 'radio',
-//     'class'         => array('cryotopay_type form-row-wide'),
-//     'label'         => __('CryptoPay Types', $this->domain),
-//     'options'       => $this->options,
-// ), reset( $option_keys ) );
