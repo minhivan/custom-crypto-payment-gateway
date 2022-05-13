@@ -38,8 +38,10 @@ if (!class_exists('TeknixCryptoPay')) {
         {
             add_action('plugins_loaded', array($this, 'crypto_pay_load_files'));
             add_filter('woocommerce_payment_gateways', array($this, 'teknix_cryptopay_add_gateway'));
-            add_action('wp_ajax_crypto_pay_payment_verify', 'crypto_pay_payment_verify');
-            add_action('wp_ajax_nopriv_crypto_pay_payment_verify', 'crypto_pay_payment_verify');
+
+            add_action('wp_ajax_crypto_pay_action_process', 'crypto_pay_action_process');
+            add_action('wp_ajax_nopriv_crypto_pay_action_process', 'crypto_pay_action_process');
+            
             add_action('woocommerce_order_status_on-hold', 'crypto_pay_order_process');
         }
 
