@@ -5,7 +5,7 @@
             <div class="form-animation">
                 <div class="form-row form-group validate-required other" id="address_field" data-priority="10">
                     <span class="label"><?php esc_html_e('Zomland Wallet Address', 'woocommerce'); ?></span>
-                    <span class="text key-code">1235gxvdghshhgjhhh7686h36bvhs</span>
+                    <span class="text key-code"><?= get_field('_receiving_wallet', 'option'); ?></span>
                     <div class="line"></div>
                     <span class="copy key-copy-btn">
                         <img alt="" src="<?php echo INVEST_URL ?>assets/icons/copy-primary.svg" class="ct-image" loading="lazy" width="20" height="20">
@@ -87,5 +87,5 @@
 
         </div>
     </div>
-    <span id="transaction-submit" class="ct-link-button button" type="submit" style="width: 100%; cursor: pointer;" data-id="<?= $order_id  ?>"><?php esc_html_e('Submit', 'woocommerce'); ?></span>
+    <button id="transaction-submit" disabled class="ct-link-button button payment-btn" type="submit" style="width: 100%; cursor: pointer;" data-id="<?= $order_id  ?>"><?php esc_html_e('Pay now', 'woocommerce'); ?></button>
 </div>
