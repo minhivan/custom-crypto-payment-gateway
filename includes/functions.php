@@ -58,19 +58,19 @@ function checkHealth()
 function update_acf_meta($data)
 {
     try {
-		$data = (object) $data;
+        $data = (object) $data;
 
-		if (!isset($data->id) || empty($data->id) || !isset($data->acf) || !count($data->acf))
-			return false;
+        if (!isset($data->id) || empty($data->id) || !isset($data->acf) || !count($data->acf))
+            return false;
 
-		foreach ($data->acf as $key => $value) {
-			update_field($key, $value, $data->id);
-		}
+        foreach ($data->acf as $key => $value) {
+            update_field($key, $value, $data->id);
+        }
 
-		return true;
-	} catch (Exception $e) {
-		return false;
-	}
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 
 function init_pay_for_order_form($order_id)
@@ -86,46 +86,40 @@ function init_pay_for_order_form($order_id)
     }
 }
 
-function crypto_pay_payment_verify()
+function crypto_pay_action_process()
 {
     @ini_set('display_errors', 1);
-    if (!wp_verify_nonce($_POST['nonce'], 'ivt-nonce')) {
-        die('Busted!');
+    if (!wp_verify_nonce($_POST['nonce'], 'crypto-pay-nonce')) {
+        wp_send_json_error([
+            "status"    => "error",
+            "error"     => true,
+            "message"   => "Invalid nonce. Action prohibitied"
+        ], 400);
     }
 
     if ((!isset($_POST['hash']) && empty($_POST['hash'])) || (!isset($_POST['order_id']) && empty($_POST['order_id']))) {
-        wp_send_json_success('Wrong data');
+        wp_send_json_error([
+            "status"    => "error",
+            "error"     => true,
+            "message"   => "Invalid body data"
+        ], 400);
         wp_die();
     }
 
     $order_id       = $_POST['order_id'];
     $order          = new \WC_Order($order_id);
     $user_id        = $order->get_user_id();
-
+    $user_wallet    = $_POST['user_wallet'];
 
     if ($order->get_status() != "pending") {
-        wp_send_json_success([
-            'type' => true,
-            'id' => $order_id,
-            "title" => __('Failed', 'custom'),
-            "messageTitle" => __("Payment failed", 'custom'),
-            "message" => __('This order is Processing', 'custom')
-        ]);
+        wp_send_json_error([
+            "status"    => "error",
+            "error"     => true,
+            "message"   => "Invalid order status"
+        ], 400);
         wp_die();
     }
 
-    $default_wallet = get_user_meta($user_id, '_default_wallet', true);
-
-    if (!$default_wallet) {
-        wp_send_json_success([
-            'type' => false,
-            "title" => __('Failed', 'custom'),
-            "messageTitle" => __("No wallet detect", 'custom'),
-            "message" => __('No wallet found. Please add wallet and try again !', 'custom')
-        ]);
-        wp_die();
-    }
-    
     // $hash_duplicate_check = count(call_api("GET", home_url() . "/wp-json/wc/v3/orders?owner_address=" . $wallet . "&hash=" . $_POST['hash']));
     // if ($hash_duplicate_check) {
     //    wp_send_json_success([
@@ -135,21 +129,23 @@ function crypto_pay_payment_verify()
     //    ]);
     //    wp_die();
     // }
-
-    update_post_meta($order_id, '_transaction_hash', $_POST['hash']);
-    $order->update_status('wc-on-hold');
     
+    if ($user_wallet) {
+        update_field('_owner_address', $user_wallet, $order_id);
+    }
+    update_field('_transaction_hash', $_POST['hash'], $order_id);
+    $order->update_status('wc-on-hold');
 
     wp_send_json_success([
-        'type' => true,
-        'id' => $order_id,
-        "title" => __('Payment Confirmation', 'custom'),
-        "messageTitle" => __("Thank you", 'custom'),
-        "message" => __("We have received your TXN ID. Payment checking will take around 30 minutes. Please wait patienly.", "custom"),
+        "status" => "success",
+        "data" => array(
+            "order_id" => $order_id
+        )
     ], 200);
 
     wp_die();
 }
+
 
 
 function crypto_pay_order_process($order_id)
