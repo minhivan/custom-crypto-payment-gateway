@@ -53,8 +53,8 @@ if (!class_exists('CryptoPayGateway')) {
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
             add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
-            add_action('init', array($this, 'migrate_settings'));
             add_action('crypto_pay', 'init_pay_for_order_form', 1);
+
 
             // You can also register a webhook here
             // add_action( 'woocommerce_api_{webhook name}', array( $this, 'webhook' ) );
@@ -127,13 +127,13 @@ if (!class_exists('CryptoPayGateway')) {
 		 */
         public function payment_scripts()
         {
-            require_once CRYPTOPAY_PATH . 'includes/setup.php';   
+            require_once CRYPTOPAY_PATH . 'includes/setup.php'; 
         }
 
         /**
          * Output for the order received page.
          */
-        public function thankyou_page()
+        public function thankyou_page($order_id)
         {
         }
 
@@ -195,16 +195,6 @@ if (!class_exists('CryptoPayGateway')) {
 		 */
         public function webhook()
         {
-        }
-
-
-        public function migrate_settings()
-        {
-            $settings = array(
-                "crypto_api_key" => $this->crypto_api_key,
-                "crypto_main_wallet" => $this->crypto_main_wallet,
-            );
-            update_option('crypto_pay_settings', $settings);
         }
     }
 }
