@@ -87,5 +87,5 @@
 
         </div>
     </div>
-    <button id="transaction-submit" disabled class="ct-link-button button payment-btn" type="submit" style="width: 100%; cursor: pointer;" data-id="<?= $order_id  ?>"><?php esc_html_e('Pay now', 'woocommerce'); ?></button>
+    <button id="transaction-submit" disabled class="ct-link-button button payment-btn btn-popup" type="submit" style="width: 100%; cursor: pointer;" data-id="<?= $order_id  ?>"><?php esc_html_e('Pay now', 'woocommerce'); ?></button>
 </div>

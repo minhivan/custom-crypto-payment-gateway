@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <button id="payment-metamask-btn" class="ct-link-button button payment-btn" type="submit" style="width: 100%; cursor: pointer;"><?php esc_html_e('Pay with metamask', 'woocommerce'); ?></button>
+            <button id="payment-metamask-btn" class="ct-link-button button payment-btn btn-popup" type="submit" style="width: 100%; cursor: pointer;"><?php esc_html_e('Pay with metamask', 'woocommerce'); ?></button>
         </div>
     </div>
 </div>
