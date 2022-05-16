@@ -77,8 +77,8 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on("click", "#payment-metamask-btn", async function (e) {
-
         e.preventDefault();
+        await onChangeMetamask();
         $(this).prop("disabled", true);
         $form.addClass('processing').block({
             message: null,
@@ -243,4 +243,28 @@ async function doAjax(args) {
         return false;
     }
     return result;
+}
+
+const onChangeMetamask = async () => {
+    // init local variable
+    window.ethereum.on("networkChanged", async (networkId) => {
+        console.log("Network change - ", networkId);
+        window.clientCurrentNetwork = await web3.eth.net.getId();
+        if (!window.clientCurrentAddress) {
+            await getLoggedAccount();
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    });
+
+    window.ethereum.on("accountsChanged", async (accounts) => {
+        if (accounts.length === 0) {
+            window.clientCurrentAddress     = null;
+            window.clientCurrentNetwork     = null;
+            window.clientCurrentNetworkType = null;
+        } 
+        else {
+            window.clientCurrentNetwork = accounts[0];
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    });
 }
