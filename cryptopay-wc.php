@@ -12,12 +12,7 @@
 if (!defined('ABSPATH'))
     exit;
 
-define('CRYPTOPAY_FILE', __FILE__);
-define('CRYPTOPAY_PATH', plugin_dir_path(CRYPTOPAY_FILE));
-define('CRYPTOPAY_URL', plugin_dir_url(CRYPTOPAY_FILE));
-define('CRYPTO_API_KEY', '9b462109a7a47b2755039367dff0a9a1440e42b792444e95c52624bf3837f9c7');
-define('CRYPTO_API', 'https://beta-api.teknix.vn/api/v1');
-define('MAIN_WALLET', '');
+
 
 
 if (!class_exists('TeknixCryptoPay')) {
@@ -53,6 +48,20 @@ if (!class_exists('TeknixCryptoPay')) {
                 add_action('admin_notices', array($this, 'crypto_pay_missing_notice'));
                 return;
             }
+
+            define('CRYPTOPAY_FILE', __FILE__);
+            define('CRYPTOPAY_PATH', plugin_dir_path(CRYPTOPAY_FILE));
+            define('CRYPTOPAY_URL', plugin_dir_url(CRYPTOPAY_FILE));
+
+            if (!defined('BACKGROUND_API')) {
+                define('BACKGROUND_API', 'https://beta-api.teknix.vn/api/v1');
+            }
+            if (!defined('BACKGROUND_API_KEY')) {
+                define('BACKGROUND_API_KEY', get_field("_api_key", "option"));
+            }
+            define('MAIN_WALLET', '');
+
+
             /*** Include payment gateway */
             require_once CRYPTOPAY_PATH . 'includes/functions.php';
             require_once CRYPTOPAY_PATH . 'includes/constants.php';
