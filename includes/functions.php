@@ -9,26 +9,30 @@ if (!defined('ABSPATH')) {
 * url : string | url request
 * params : array | params request
 */
-function makeApiRequest($url, $body)
-{
-    $response = wp_remote_post(CRYPTO_API . $url, array(
-        'body'      => wp_json_encode($body),
-        'method'    => 'POST',
-        'timeout'   => 45,
-        'sslverify' => false,
-        'headers'   => [
-            'content-type'      => 'application/json',
-            'zomland-api-key'   => CRYPTO_API_KEY,
-        ],
-    ));
-
-
-    if (is_wp_error($response)) {
-        $error_message = $response->get_error_message();
-        return;
-    } else {
-        $result = json_decode(wp_remote_retrieve_body($response));
-        return $result;
+if( !function_exists('makeApiRequest')) {
+    function makeApiRequest($url, $body)
+    {
+        $response = wp_remote_post(BACKGROUND_API . $url, array(
+            'body'      => wp_json_encode($body),
+            'method'    => 'POST',
+            'timeout'   => 45,
+            'sslverify' => false,
+            'headers'   => [
+                'content-type'      => 'application/json',
+                'zomland-api-key'   => BACKGROUND_API_KEY,
+            ],
+        ));
+    
+        if (is_wp_error($response)) {
+            $error_message = $response->get_error_message();
+            wc_add_notice(__('Error: ', 'woocommerce') . __($error_message, 'mycred_pay'), 'error');
+            // logger
+            return;
+        } else {
+            $result = json_decode(wp_remote_retrieve_body($response));
+            // wc_add_notice(__('request success!' . json_encode($result), 'woocommerce'), 'success');
+            return $result;
+        }
     }
 }
 
@@ -36,12 +40,12 @@ function makeApiRequest($url, $body)
 
 function checkHealth()
 {
-    $response = wp_remote_get(CRYPTO_API . '/health', array(
+    $response = wp_remote_get(BACKGROUND_API . '/health', array(
         'timeout'   => 45,
         'sslverify' => false,
         'headers'   => [
             'content-type'      => 'application/json',
-            'zomland-api-key'   => CRYPTO_API_KEY,
+            'zomland-api-key'   => BACKGROUND_API_KEY,
         ],
     ));
     if (is_wp_error($response)) {
@@ -108,8 +112,7 @@ function crypto_pay_action_process()
 
     $order_id       = $_POST['order_id'];
     $order          = new \WC_Order($order_id);
-    $user_id        = $order->get_user_id();
-    $user_wallet    = $_POST['user_wallet'];
+    $user_wallet    = $_POST['user_wallet'] ?? get_field('_default_wallet', 'user_' . $order->get_customer_id());
 
     if ($order->get_status() != "pending") {
         wp_send_json_error([
@@ -134,7 +137,7 @@ function crypto_pay_action_process()
         update_field('_owner_address', $user_wallet, $order_id);
     }
     update_field('_transaction_hash', $_POST['hash'], $order_id);
-    $order->update_status('wc-on-hold');
+    // $order->update_status('wc-on-hold');
 
     wp_send_json_success([
         "status" => "success",
@@ -145,7 +148,6 @@ function crypto_pay_action_process()
 
     wp_die();
 }
-
 
 
 function crypto_pay_order_process($order_id)
