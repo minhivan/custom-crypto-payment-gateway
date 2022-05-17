@@ -56,10 +56,14 @@ if (!class_exists('TeknixCryptoPay')) {
             if (!defined('BACKGROUND_API')) {
                 define('BACKGROUND_API', 'https://beta-api.teknix.vn/api/v1');
             }
+            
             if (!defined('BACKGROUND_API_KEY')) {
                 define('BACKGROUND_API_KEY', get_field("_api_key", "option"));
             }
-            define('MAIN_WALLET', '');
+
+            if (!defined('MAIN_WALLET')) {
+                define('MAIN_WALLET', get_field("_receiving_wallet", "option"));
+            }
 
 
             /*** Include payment gateway */
